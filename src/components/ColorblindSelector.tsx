@@ -29,6 +29,7 @@ export const ColorblindSelector: React.FC<ColorblindSelectorProps> = ({
   });
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const updateDropdownPosition = useCallback(() => {
     if (buttonRef.current) {
@@ -55,10 +56,11 @@ export const ColorblindSelector: React.FC<ColorblindSelectorProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
+      const target = e.target as Node;
+      const isInsideContainer = containerRef.current?.contains(target) ?? false;
+      const isInsideDropdown = dropdownRef.current?.contains(target) ?? false;
+
+      if (!isInsideContainer && !isInsideDropdown) {
         setIsOpen(false);
       }
     };
@@ -134,6 +136,7 @@ export const ColorblindSelector: React.FC<ColorblindSelectorProps> = ({
       {isOpen &&
         createPortal(
           <div
+            ref={dropdownRef}
             role="listbox"
             className="fixed z-[9999] py-2 rounded-2xl bg-dark-700/95 backdrop-blur-xl border border-dark-500/50 shadow-2xl animate-fade-in overflow-hidden max-h-96 overflow-y-auto scrollbar-thin"
             style={{
